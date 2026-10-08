@@ -55,17 +55,6 @@ Os resultados e relatórios Allure são gerados durante a execução e não prec
 
 ---
 
-##  Tecnologias Utilizadas
-
-- **Linguagem:** Python 3.14+
-- **Automação Web:** [Playwright](https://playwright.dev/python/)
-- **Framework de Testes:** [Pytest](https://pytest.org/)
-- **BDD / Gherkin:** [pytest-bdd](https://pytest-bdd.readthedocs.io/)
-- **Geração de Relatórios:** [Allure Report](https://allurereport.org/docs/pytest/)
-- **Cliente HTTP:** [Requests](https://requests.readthedocs.io/)
-
----
-
 ##  Pré-requisitos e Instalação
 
 1. Acesse o diretório do projeto:
