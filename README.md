@@ -9,7 +9,8 @@ A IA foi utilizada para criar a base dos testes automatizados, correção de sin
 
 Tomei a iniciativa de utilizar allure para fazer os reports e implementar CI/CD para deixar a suite de testes mais completa.
 
-
+O relatório pode ser visualizado aqui:
+https://letiqa.github.io/verzel-store/
 
 ---
 
