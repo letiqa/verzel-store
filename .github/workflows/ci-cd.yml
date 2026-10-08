@@ -93,20 +93,43 @@ jobs:
       group: github-pages
       cancel-in-progress: true
     steps:
+      - name: Check whether GitHub Pages is enabled
+        id: pages
+        uses: actions/github-script@v7
+        with:
+          script: |
+            try {
+              await github.rest.repos.getPages({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+              });
+              core.setOutput('enabled', 'true');
+            } catch (error) {
+              if (error.status !== 404) {
+                throw error;
+              }
+              core.notice('GitHub Pages is not enabled. The Allure report is available as a workflow artifact; enable Pages with GitHub Actions as its source to publish it.');
+              core.setOutput('enabled', 'false');
+            }
+
       - name: Configure GitHub Pages
+        if: steps.pages.outputs.enabled == 'true'
         uses: actions/configure-pages@v5
 
       - name: Download Allure HTML report
+        if: steps.pages.outputs.enabled == 'true'
         uses: actions/download-artifact@v4
         with:
           name: allure-report
           path: reports/allure-report
 
       - name: Upload report for GitHub Pages
+        if: steps.pages.outputs.enabled == 'true'
         uses: actions/upload-pages-artifact@v3
         with:
           path: reports/allure-report
 
       - name: Deploy to GitHub Pages
+        if: steps.pages.outputs.enabled == 'true'
         id: deployment
         uses: actions/deploy-pages@v4

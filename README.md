@@ -20,7 +20,7 @@ Tomei a iniciativa de utilizar allure para fazer os reports e implementar CI/CD 
 - **Cliente de API**: `services/api_client.py` centraliza as chamadas HTTP usadas pelos testes de API.
 - **Configuração e fixtures**: `config/settings.py` reúne URL e dados fixos da loja. `tests/conftest.py` configura fixtures de Playwright e API, integra os cenários BDD, marca defeitos conhecidos como `xfail` e anexa screenshots de falhas ao Allure.
 - **Collection Postman**: O arquivo `Verzel Store API.postman_collection.json` contém a suíte importável dos testes de API.
-- **CI/CD**: `.github/workflows/ci-cd.yml` executa os testes automatizados e publica o relatório Allure no GitHub Pages após sucesso na branch padrão.
+- **CI/CD**: `.github/workflows/ci-cd.yml` executa os testes automatizados, gera o relatório Allure e o publica no GitHub Pages após sucesso na branch padrão, quando Pages estiver habilitado.
 
 ```text
 verzel-store/
@@ -106,7 +106,7 @@ A suite contém testes com assertions de status, respostas, cálculos, cupons, f
 
 O workflow em `.github/workflows/ci-cd.yml` instala as dependências e o Chromium e executa toda a suíte em pushes, pull requests, execuções manuais e diariamente às **08:00 (horário de Brasília, UTC−3)**. O GitHub Actions usa UTC, por isso o agendamento está definido para `11:00 UTC`. Os resultados brutos e o relatório HTML do Allure são guardados como artefatos por 14 dias, inclusive quando há falhas nos testes. Após uma execução bem-sucedida na branch padrão, o relatório também é publicado no GitHub Pages.
 
-Para habilitar a publicação, configure **Settings → Pages → Build and deployment → Source → GitHub Actions** no repositório. O relatório publicado fica disponível na URL de Pages exibida pela execução do workflow. A publicação não ocorre em pull requests nem em branches diferentes da padrão. O agendamento roda na branch padrão e pode sofrer pequenos atrasos conforme a fila do GitHub Actions.
+Para habilitar a publicação, configure **Settings → Pages → Build and deployment → Source → GitHub Actions** no repositório. Se o Pages ainda não estiver habilitado, o workflow não falha: o relatório continua disponível como artefato da execução, e a publicação é ignorada com um aviso. Quando configurado, o relatório publicado fica disponível na URL de Pages exibida pela execução do workflow. A publicação não ocorre em pull requests nem em branches diferentes da padrão. O agendamento roda na branch padrão e pode sofrer pequenos atrasos conforme a fila do GitHub Actions.
 
 ---
 
