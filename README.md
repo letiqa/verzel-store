@@ -102,7 +102,7 @@ Os resultados e relatórios Allure são gerados durante a execução.
 
 ##  Como Executar os Testes
 
-### 1. Executar todos os testes
+###  Executar todos os testes
 ```bash
 pytest
 ```
@@ -110,7 +110,7 @@ pytest
 
 
 
-### 4. Collection Postman da API
+###  Collection Postman da API
 A collection pronta para importar está no formato **Postman Collection v2.1** em `Verzel Store API.postman_collection.json`. No Postman, escolha **Import → File** e selecione esse arquivo. Depois, execute a collection ou uma de suas pastas: **Produtos**, **Carrinho** ou **Pedidos**. A variável `baseUrl` já aponta para o ambiente de QA.
 
 A suite contém testes com assertions de status, respostas, cálculos, cupons, frete, pedidos e códigos de erro da documentação. Os cenários BUG-001 e BUG-002 verificam o comportamento esperado documentado e podem falhar enquanto esses defeitos conhecidos persistirem.
