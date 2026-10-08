@@ -51,7 +51,7 @@ verzel-store/
 └── README.md                         # Este documento
 ```
 
-Os resultados e relatórios Allure são gerados durante a execução e não precisam ser mantidos no projeto. Capturas de tela das falhas de interface são anexadas aos resultados Allure.
+Os resultados e relatórios Allure são gerados durante a execução. Capturas de tela das falhas de interface são anexadas aos resultados Allure.
 
 ---
 
@@ -98,7 +98,7 @@ pytest
 ### 4. Collection Postman da API
 A collection pronta para importar está no formato **Postman Collection v2.1** em `Verzel Store API.postman_collection.json`. No Postman, escolha **Import → File** e selecione esse arquivo. Depois, execute a collection ou uma de suas pastas: **Produtos**, **Carrinho** ou **Pedidos**. A variável `baseUrl` já aponta para o ambiente de QA.
 
-A suite contém 43 requests com assertions de status, respostas, cálculos, cupons, frete, pedidos e os 12 códigos de erro da documentação. Os cenários BUG-001 e BUG-002 verificam o comportamento esperado documentado e podem falhar enquanto esses defeitos conhecidos persistirem.
+A suite contém testes com assertions de status, respostas, cálculos, cupons, frete, pedidos e códigos de erro da documentação. Os cenários BUG-001 e BUG-002 verificam o comportamento esperado documentado e podem falhar enquanto esses defeitos conhecidos persistirem.
 
 ---
 
