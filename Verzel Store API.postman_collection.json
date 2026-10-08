@@ -1,0 +1,1621 @@
+{
+    "info":  {
+                 "name":  "Verzel Store API - Suite completa",
+                 "description":  "Collection importável com os cenários da documentação oficial: https://verzel-store.qa-test-verzel-store.workers.dev/documentacao. Cobre produtos, cálculos do carrinho, cupons, frete, arredondamento, pedidos e os 12 códigos de erro documentados. BUG-001 (frete no subtotal exato de R$ 200) e BUG-002 (quantidade superior a cinco) são defeitos conhecidos; os requests verificam os resultados esperados pela documentação e podem falhar até a correção.",
+                 "schema":  "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+             },
+    "item":  [
+                 {
+                     "name":  "Produtos",
+                     "item":  [
+                                  {
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/api/produtos"
+                                                  },
+                                      "name":  "Listar todos os produtos",
+                                      "description":  "Esperado: HTTP 200.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Validar campos e cálculos documentados\", function () {",
+                                                                                    "pm.expect(data).to.be.an(\"array\").with.lengthOf(8);",
+                                                                                    "pm.expect(data.map(p =\u003e [p.id, p.preco])).to.eql([[\"P001\",59.9],[\"P002\",139.9],[\"P003\",189.9],[\"P004\",49.9],[\"P005\",100],[\"P006\",29.9],[\"P007\",229.9],[\"P008\",50]]);",
+                                                                                    "});"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/api/produtos/P001"
+                                                  },
+                                      "name":  "Consultar produto P001",
+                                      "description":  "Esperado: HTTP 200.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Validar campos e cálculos documentados\", function () {",
+                                                                                    "pm.expect(data[\"nome\"], \"nome\").to.eql(\"Camiseta Essencial\");",
+                                                                                    "pm.expect(data[\"id\"], \"id\").to.eql(\"P001\");",
+                                                                                    "pm.expect(Math.abs(data[\"preco\"] - 59.9) \u003c 0.011, \"preco\").to.be.true;",
+                                                                                    "});"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/api/produtos/NAO-EXISTE"
+                                                  },
+                                      "name":  "Produto inexistente retorna 404",
+                                      "description":  "Esperado: HTTP 404, erro PRODUTO_NAO_ENCONTRADO.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 404\", function () { pm.response.to.have.status(404); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Código de erro PRODUTO_NAO_ENCONTRADO\", function () { pm.expect(data.erro).to.be.an(\"object\"); pm.expect(data.erro.codigo).to.eql(\"PRODUTO_NAO_ENCONTRADO\"); pm.expect(data.erro.mensagem).to.be.a(\"string\").and.not.empty; });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/api/rota-inexistente"
+                                                  },
+                                      "name":  "Rota inexistente retorna 404",
+                                      "description":  "Esperado: HTTP 404, erro ROTA_NAO_ENCONTRADA.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 404\", function () { pm.response.to.have.status(404); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Código de erro ROTA_NAO_ENCONTRADA\", function () { pm.expect(data.erro).to.be.an(\"object\"); pm.expect(data.erro.codigo).to.eql(\"ROTA_NAO_ENCONTRADA\"); pm.expect(data.erro.mensagem).to.be.a(\"string\").and.not.empty; });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/produtos"
+                                                  },
+                                      "name":  "Método não permitido retorna 405",
+                                      "description":  "Esperado: HTTP 405, erro METODO_NAO_PERMITIDO.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 405\", function () { pm.response.to.have.status(405); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Código de erro METODO_NAO_PERMITIDO\", function () { pm.expect(data.erro).to.be.an(\"object\"); pm.expect(data.erro.codigo).to.eql(\"METODO_NAO_PERMITIDO\"); pm.expect(data.erro.mensagem).to.be.a(\"string\").and.not.empty; });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Carrinho",
+                     "item":  [
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"P001\",\r\n                      \"quantidade\":  1\r\n                  }\r\n              ]\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/carrinho/calcular"
+                                                  },
+                                      "name":  "Calcular sem cupom",
+                                      "description":  "Esperado: HTTP 200.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Validar campos e cálculos documentados\", function () {",
+                                                                                    "pm.expect(Math.abs(data[\"subtotal\"] - 59.9) \u003c 0.011, \"subtotal\").to.be.true;",
+                                                                                    "pm.expect(Math.abs(data[\"desconto\"] - 0) \u003c 0.011, \"desconto\").to.be.true;",
+                                                                                    "pm.expect(Math.abs(data[\"total\"] - 79.8) \u003c 0.011, \"total\").to.be.true;",
+                                                                                    "pm.expect(Math.abs(data[\"frete\"] - 19.9) \u003c 0.011, \"frete\").to.be.true;",
+                                                                                    "pm.expect(Math.abs(data[\"valorFaltanteFreteGratis\"] - 140.1) \u003c 0.011, \"valorFaltanteFreteGratis\").to.be.true;",
+                                                                                    "pm.expect(data[\"freteGratis\"], \"freteGratis\").to.eql(false);",
+                                                                                    "});"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"cupom\":  \"BEMVINDO10\",\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"P001\",\r\n                      \"quantidade\":  2\r\n                  }\r\n              ]\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/carrinho/calcular"
+                                                  },
+                                      "name":  "Aplicar cupom válido BEMVINDO10",
+                                      "description":  "Esperado: HTTP 200.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Validar campos e cálculos documentados\", function () {",
+                                                                                    "pm.expect(Math.abs(data[\"subtotal\"] - 119.8) \u003c 0.011, \"subtotal\").to.be.true;",
+                                                                                    "pm.expect(data[\"cupom\"]\r\n[\"codigo\"], \"cupom.codigo\").to.eql(\"BEMVINDO10\");",
+                                                                                    "pm.expect(Math.abs(data[\"desconto\"] - 11.98) \u003c 0.011, \"desconto\").to.be.true;",
+                                                                                    "pm.expect(Math.abs(data[\"total\"] - 127.72) \u003c 0.011, \"total\").to.be.true;",
+                                                                                    "pm.expect(Math.abs(data[\"frete\"] - 19.9) \u003c 0.011, \"frete\").to.be.true;",
+                                                                                    "pm.expect(data[\"cupom\"]\r\n[\"aplicado\"], \"cupom.aplicado\").to.eql(true);",
+                                                                                    "});"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"cupom\":  \"  bemvindo10  \",\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"P001\",\r\n                      \"quantidade\":  2\r\n                  }\r\n              ]\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/carrinho/calcular"
+                                                  },
+                                      "name":  "Cupom ignora maiúsculas e espaços",
+                                      "description":  "Esperado: HTTP 200.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Validar campos e cálculos documentados\", function () {",
+                                                                                    "pm.expect(Math.abs(data[\"subtotal\"] - 119.8) \u003c 0.011, \"subtotal\").to.be.true;",
+                                                                                    "pm.expect(data[\"cupom\"]\r\n[\"aplicado\"], \"cupom.aplicado\").to.eql(true);",
+                                                                                    "pm.expect(Math.abs(data[\"desconto\"] - 11.98) \u003c 0.011, \"desconto\").to.be.true;",
+                                                                                    "});"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"P002\",\r\n                      \"quantidade\":  1\r\n                  },\r\n                  {\r\n                      \"produtoId\":  \"P004\",\r\n                      \"quantidade\":  2\r\n                  }\r\n              ]\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/carrinho/calcular"
+                                                  },
+                                      "name":  "Frete grátis acima de R$ 200",
+                                      "description":  "Esperado: HTTP 200.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Validar campos e cálculos documentados\", function () {",
+                                                                                    "pm.expect(Math.abs(data[\"subtotal\"] - 239.7) \u003c 0.011, \"subtotal\").to.be.true;",
+                                                                                    "pm.expect(data[\"freteGratis\"], \"freteGratis\").to.eql(true);",
+                                                                                    "pm.expect(Math.abs(data[\"total\"] - 239.7) \u003c 0.011, \"total\").to.be.true;",
+                                                                                    "pm.expect(Math.abs(data[\"valorFaltanteFreteGratis\"] - 0) \u003c 0.011, \"valorFaltanteFreteGratis\").to.be.true;",
+                                                                                    "pm.expect(Math.abs(data[\"frete\"] - 0) \u003c 0.011, \"frete\").to.be.true;",
+                                                                                    "});"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"P005\",\r\n                      \"quantidade\":  2\r\n                  }\r\n              ]\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/carrinho/calcular"
+                                                  },
+                                      "name":  "Frete grátis no limite exato de R$ 200 (BUG-001 conhecido)",
+                                      "description":  "Esperado: HTTP 200.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Validar campos e cálculos documentados\", function () {",
+                                                                                    "pm.expect(Math.abs(data[\"subtotal\"] - 200) \u003c 0.011, \"subtotal\").to.be.true;",
+                                                                                    "pm.expect(data[\"freteGratis\"], \"freteGratis\").to.eql(true);",
+                                                                                    "pm.expect(Math.abs(data[\"total\"] - 200) \u003c 0.011, \"total\").to.be.true;",
+                                                                                    "pm.expect(Math.abs(data[\"valorFaltanteFreteGratis\"] - 0) \u003c 0.011, \"valorFaltanteFreteGratis\").to.be.true;",
+                                                                                    "pm.expect(Math.abs(data[\"frete\"] - 0) \u003c 0.011, \"frete\").to.be.true;",
+                                                                                    "});"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"P005\",\r\n                      \"quantidade\":  1\r\n                  }\r\n              ]\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/carrinho/calcular"
+                                                  },
+                                      "name":  "Frete fixo abaixo de R$ 200 e valor faltante",
+                                      "description":  "Esperado: HTTP 200.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Validar campos e cálculos documentados\", function () {",
+                                                                                    "pm.expect(Math.abs(data[\"subtotal\"] - 100) \u003c 0.011, \"subtotal\").to.be.true;",
+                                                                                    "pm.expect(data[\"freteGratis\"], \"freteGratis\").to.eql(false);",
+                                                                                    "pm.expect(Math.abs(data[\"total\"] - 119.9) \u003c 0.011, \"total\").to.be.true;",
+                                                                                    "pm.expect(Math.abs(data[\"valorFaltanteFreteGratis\"] - 100) \u003c 0.011, \"valorFaltanteFreteGratis\").to.be.true;",
+                                                                                    "pm.expect(Math.abs(data[\"frete\"] - 19.9) \u003c 0.011, \"frete\").to.be.true;",
+                                                                                    "});"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"cupom\":  \"BEMVINDO10\",\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"P002\",\r\n                      \"quantidade\":  2\r\n                  }\r\n              ]\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/carrinho/calcular"
+                                                  },
+                                      "name":  "Frete considera subtotal antes do desconto",
+                                      "description":  "Esperado: HTTP 200.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Validar campos e cálculos documentados\", function () {",
+                                                                                    "pm.expect(Math.abs(data[\"subtotal\"] - 279.8) \u003c 0.011, \"subtotal\").to.be.true;",
+                                                                                    "pm.expect(data[\"freteGratis\"], \"freteGratis\").to.eql(true);",
+                                                                                    "pm.expect(Math.abs(data[\"desconto\"] - 27.98) \u003c 0.011, \"desconto\").to.be.true;",
+                                                                                    "pm.expect(Math.abs(data[\"total\"] - 251.82) \u003c 0.011, \"total\").to.be.true;",
+                                                                                    "pm.expect(Math.abs(data[\"frete\"] - 0) \u003c 0.011, \"frete\").to.be.true;",
+                                                                                    "});"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"cupom\":  \"BEMVINDO10\",\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"P005\",\r\n                      \"quantidade\":  1\r\n                  }\r\n              ]\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/carrinho/calcular"
+                                                  },
+                                      "name":  "Desconto do cupom não incide sobre frete",
+                                      "description":  "Esperado: HTTP 200.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Validar campos e cálculos documentados\", function () {",
+                                                                                    "pm.expect(Math.abs(data[\"subtotal\"] - 100) \u003c 0.011, \"subtotal\").to.be.true;",
+                                                                                    "pm.expect(Math.abs(data[\"desconto\"] - 10) \u003c 0.011, \"desconto\").to.be.true;",
+                                                                                    "pm.expect(Math.abs(data[\"total\"] - 109.9) \u003c 0.011, \"total\").to.be.true;",
+                                                                                    "pm.expect(Math.abs(data[\"frete\"] - 19.9) \u003c 0.011, \"frete\").to.be.true;",
+                                                                                    "});"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"cupom\":  \"NAOEXISTE\",\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"P001\",\r\n                      \"quantidade\":  1\r\n                  }\r\n              ]\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/carrinho/calcular"
+                                                  },
+                                      "name":  "Cupom inexistente não aplica desconto",
+                                      "description":  "Esperado: HTTP 200.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Validar campos e cálculos documentados\", function () {",
+                                                                                    "pm.expect(data[\"cupom\"]\r\n[\"aplicado\"], \"cupom.aplicado\").to.eql(false);",
+                                                                                    "pm.expect(Math.abs(data[\"desconto\"] - 0) \u003c 0.011, \"desconto\").to.be.true;",
+                                                                                    "pm.expect(data[\"cupom\"]\r\n[\"mensagem\"], \"cupom.mensagem\").to.eql(\"Cupom inválido.\");",
+                                                                                    "});"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"cupom\":  \"VERAO2026\",\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"P001\",\r\n                      \"quantidade\":  1\r\n                  }\r\n              ]\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/carrinho/calcular"
+                                                  },
+                                      "name":  "Cupom expirado não aplica desconto",
+                                      "description":  "Esperado: HTTP 200.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Validar campos e cálculos documentados\", function () {",
+                                                                                    "pm.expect(data[\"cupom\"]\r\n[\"aplicado\"], \"cupom.aplicado\").to.eql(false);",
+                                                                                    "pm.expect(Math.abs(data[\"desconto\"] - 0) \u003c 0.011, \"desconto\").to.be.true;",
+                                                                                    "pm.expect(data[\"cupom\"]\r\n[\"mensagem\"], \"cupom.mensagem\").to.eql(\"Cupom expirado.\");",
+                                                                                    "});"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"cupom\":  \"BEMVINDO10\",\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"P001\",\r\n                      \"quantidade\":  3\r\n                  }\r\n              ]\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/carrinho/calcular"
+                                                  },
+                                      "name":  "Arredondar valores para duas casas decimais",
+                                      "description":  "Esperado: HTTP 200.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Validar campos e cálculos documentados\", function () {",
+                                                                                    "pm.expect(Math.abs(data[\"subtotal\"] - 179.7) \u003c 0.011, \"subtotal\").to.be.true;",
+                                                                                    "pm.expect(Math.abs(data[\"desconto\"] - 17.97) \u003c 0.011, \"desconto\").to.be.true;",
+                                                                                    "pm.expect(Math.abs(data[\"total\"] - 181.63) \u003c 0.011, \"total\").to.be.true;",
+                                                                                    "pm.expect(Math.abs(data[\"frete\"] - 19.9) \u003c 0.011, \"frete\").to.be.true;",
+                                                                                    "});"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/carrinho/calcular"
+                                                  },
+                                      "name":  "Rejeitar lista de itens ausente",
+                                      "description":  "Esperado: HTTP 422, erro ITENS_OBRIGATORIOS.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 422\", function () { pm.response.to.have.status(422); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Código de erro ITENS_OBRIGATORIOS\", function () { pm.expect(data.erro).to.be.an(\"object\"); pm.expect(data.erro.codigo).to.eql(\"ITENS_OBRIGATORIOS\"); pm.expect(data.erro.mensagem).to.be.a(\"string\").and.not.empty; });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"itens\":  [\r\n\r\n              ]\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/carrinho/calcular"
+                                                  },
+                                      "name":  "Rejeitar lista vazia",
+                                      "description":  "Esperado: HTTP 422, erro ITENS_OBRIGATORIOS.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 422\", function () { pm.response.to.have.status(422); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Código de erro ITENS_OBRIGATORIOS\", function () { pm.expect(data.erro).to.be.an(\"object\"); pm.expect(data.erro.codigo).to.eql(\"ITENS_OBRIGATORIOS\"); pm.expect(data.erro.mensagem).to.be.a(\"string\").and.not.empty; });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"itens\":  [\r\n                  {\r\n                      \"quantidade\":  1\r\n                  }\r\n              ]\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/carrinho/calcular"
+                                                  },
+                                      "name":  "Rejeitar item inválido sem produtoId",
+                                      "description":  "Esperado: HTTP 422, erro ITEM_INVALIDO.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 422\", function () { pm.response.to.have.status(422); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Código de erro ITEM_INVALIDO\", function () { pm.expect(data.erro).to.be.an(\"object\"); pm.expect(data.erro.codigo).to.eql(\"ITEM_INVALIDO\"); pm.expect(data.erro.mensagem).to.be.a(\"string\").and.not.empty; });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"NAO-EXISTE\",\r\n                      \"quantidade\":  1\r\n                  }\r\n              ]\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/carrinho/calcular"
+                                                  },
+                                      "name":  "Rejeitar produto inexistente",
+                                      "description":  "Esperado: HTTP 422, erro PRODUTO_NAO_ENCONTRADO.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 422\", function () { pm.response.to.have.status(422); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Código de erro PRODUTO_NAO_ENCONTRADO\", function () { pm.expect(data.erro).to.be.an(\"object\"); pm.expect(data.erro.codigo).to.eql(\"PRODUTO_NAO_ENCONTRADO\"); pm.expect(data.erro.mensagem).to.be.a(\"string\").and.not.empty; });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"P001\",\r\n                      \"quantidade\":  1\r\n                  },\r\n                  {\r\n                      \"produtoId\":  \"P001\",\r\n                      \"quantidade\":  2\r\n                  }\r\n              ]\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/carrinho/calcular"
+                                                  },
+                                      "name":  "Rejeitar produto duplicado",
+                                      "description":  "Esperado: HTTP 422, erro ITEM_DUPLICADO.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 422\", function () { pm.response.to.have.status(422); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Código de erro ITEM_DUPLICADO\", function () { pm.expect(data.erro).to.be.an(\"object\"); pm.expect(data.erro.codigo).to.eql(\"ITEM_DUPLICADO\"); pm.expect(data.erro.mensagem).to.be.a(\"string\").and.not.empty; });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"P001\",\r\n                      \"quantidade\":  0\r\n                  }\r\n              ]\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/carrinho/calcular"
+                                                  },
+                                      "name":  "Rejeitar quantidade zero",
+                                      "description":  "Esperado: HTTP 422, erro QUANTIDADE_INVALIDA.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 422\", function () { pm.response.to.have.status(422); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Código de erro QUANTIDADE_INVALIDA\", function () { pm.expect(data.erro).to.be.an(\"object\"); pm.expect(data.erro.codigo).to.eql(\"QUANTIDADE_INVALIDA\"); pm.expect(data.erro.mensagem).to.be.a(\"string\").and.not.empty; });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"P001\",\r\n                      \"quantidade\":  -1\r\n                  }\r\n              ]\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/carrinho/calcular"
+                                                  },
+                                      "name":  "Rejeitar quantidade negativa",
+                                      "description":  "Esperado: HTTP 422, erro QUANTIDADE_INVALIDA.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 422\", function () { pm.response.to.have.status(422); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Código de erro QUANTIDADE_INVALIDA\", function () { pm.expect(data.erro).to.be.an(\"object\"); pm.expect(data.erro.codigo).to.eql(\"QUANTIDADE_INVALIDA\"); pm.expect(data.erro.mensagem).to.be.a(\"string\").and.not.empty; });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"P001\",\r\n                      \"quantidade\":  1.5\r\n                  }\r\n              ]\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/carrinho/calcular"
+                                                  },
+                                      "name":  "Rejeitar quantidade fracionária",
+                                      "description":  "Esperado: HTTP 422, erro QUANTIDADE_INVALIDA.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 422\", function () { pm.response.to.have.status(422); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Código de erro QUANTIDADE_INVALIDA\", function () { pm.expect(data.erro).to.be.an(\"object\"); pm.expect(data.erro.codigo).to.eql(\"QUANTIDADE_INVALIDA\"); pm.expect(data.erro.mensagem).to.be.a(\"string\").and.not.empty; });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"P001\",\r\n                      \"quantidade\":  6\r\n                  }\r\n              ]\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/carrinho/calcular"
+                                                  },
+                                      "name":  "Rejeitar mais de cinco unidades (BUG-002 conhecido)",
+                                      "description":  "Esperado: HTTP 422, erro QUANTIDADE_MAXIMA_EXCEDIDA.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 422\", function () { pm.response.to.have.status(422); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Código de erro QUANTIDADE_MAXIMA_EXCEDIDA\", function () { pm.expect(data.erro).to.be.an(\"object\"); pm.expect(data.erro.codigo).to.eql(\"QUANTIDADE_MAXIMA_EXCEDIDA\"); pm.expect(data.erro.mensagem).to.be.a(\"string\").and.not.empty; });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{ json malformado",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "text"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/carrinho/calcular"
+                                                  },
+                                      "name":  "Rejeitar JSON malformado",
+                                      "description":  "Esperado: HTTP 400, erro JSON_INVALIDO.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Código de erro JSON_INVALIDO\", function () { pm.expect(data.erro).to.be.an(\"object\"); pm.expect(data.erro.codigo).to.eql(\"JSON_INVALIDO\"); pm.expect(data.erro.mensagem).to.be.a(\"string\").and.not.empty; });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Pedidos",
+                     "item":  [
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"P005\",\r\n                      \"quantidade\":  1\r\n                  }\r\n              ],\r\n    \"cliente\":  {\r\n                    \"email\":  \"maria@exemplo.com\",\r\n                    \"cep\":  \"01310-100\",\r\n                    \"nome\":  \"Maria Silva\"\r\n                }\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/pedidos"
+                                                  },
+                                      "name":  "Criar pedido válido sem cupom",
+                                      "description":  "Esperado: HTTP 201.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Validar campos e cálculos documentados\", function () {",
+                                                                                    "pm.expect(Math.abs(data[\"subtotal\"] - 100) \u003c 0.011, \"subtotal\").to.be.true;",
+                                                                                    "pm.expect(Math.abs(data[\"desconto\"] - 0) \u003c 0.011, \"desconto\").to.be.true;",
+                                                                                    "pm.expect(Math.abs(data[\"total\"] - 119.9) \u003c 0.011, \"total\").to.be.true;",
+                                                                                    "pm.expect(Math.abs(data[\"frete\"] - 19.9) \u003c 0.011, \"frete\").to.be.true;",
+                                                                                    "});",
+                                                                                    "pm.test(\"Número do pedido no formato documentado\", function () { pm.expect(data.numero).to.match(/^VZ-\\d{6}$/); pm.expect(data.criadoEm).to.be.a(\"string\"); });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"cliente\":  {\r\n                    \"email\":  \"maria@exemplo.com\",\r\n                    \"cep\":  \"01310-100\",\r\n                    \"nome\":  \"Maria Silva\"\r\n                },\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"P005\",\r\n                      \"quantidade\":  1\r\n                  }\r\n              ],\r\n    \"cupom\":  \"BEMVINDO10\"\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/pedidos"
+                                                  },
+                                      "name":  "Criar pedido válido com cupom",
+                                      "description":  "Esperado: HTTP 201.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Validar campos e cálculos documentados\", function () {",
+                                                                                    "pm.expect(Math.abs(data[\"subtotal\"] - 100) \u003c 0.011, \"subtotal\").to.be.true;",
+                                                                                    "pm.expect(data[\"cupom\"]\r\n[\"aplicado\"], \"cupom.aplicado\").to.eql(true);",
+                                                                                    "pm.expect(Math.abs(data[\"desconto\"] - 10) \u003c 0.011, \"desconto\").to.be.true;",
+                                                                                    "pm.expect(Math.abs(data[\"total\"] - 109.9) \u003c 0.011, \"total\").to.be.true;",
+                                                                                    "pm.expect(Math.abs(data[\"frete\"] - 19.9) \u003c 0.011, \"frete\").to.be.true;",
+                                                                                    "});",
+                                                                                    "pm.test(\"Número do pedido no formato documentado\", function () { pm.expect(data.numero).to.match(/^VZ-\\d{6}$/); pm.expect(data.criadoEm).to.be.a(\"string\"); });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"P001\",\r\n                      \"quantidade\":  5\r\n                  }\r\n              ],\r\n    \"cliente\":  {\r\n                    \"email\":  \"maria@exemplo.com\",\r\n                    \"cep\":  \"01310-100\",\r\n                    \"nome\":  \"Maria Silva\"\r\n                }\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/pedidos"
+                                                  },
+                                      "name":  "Aceitar quantidade máxima de cinco unidades",
+                                      "description":  "Esperado: HTTP 201.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Validar campos e cálculos documentados\", function () {",
+                                                                                    "pm.expect(Math.abs(data[\"subtotal\"] - 299.5) \u003c 0.011, \"subtotal\").to.be.true;",
+                                                                                    "pm.expect(data[\"freteGratis\"], \"freteGratis\").to.eql(true);",
+                                                                                    "pm.expect(Math.abs(data[\"total\"] - 299.5) \u003c 0.011, \"total\").to.be.true;",
+                                                                                    "pm.expect(Math.abs(data[\"frete\"] - 0) \u003c 0.011, \"frete\").to.be.true;",
+                                                                                    "});",
+                                                                                    "pm.test(\"Número do pedido no formato documentado\", function () { pm.expect(data.numero).to.match(/^VZ-\\d{6}$/); pm.expect(data.criadoEm).to.be.a(\"string\"); });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"cliente\":  {\r\n                    \"email\":  \"maria@exemplo.com\",\r\n                    \"cep\":  \"01310-100\",\r\n                    \"nome\":  \"Maria Silva\"\r\n                },\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"P001\",\r\n                      \"quantidade\":  1\r\n                  }\r\n              ],\r\n    \"cupom\":  \"NAOEXISTE\"\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/pedidos"
+                                                  },
+                                      "name":  "Rejeitar cupom inexistente",
+                                      "description":  "Esperado: HTTP 422, erro CUPOM_INVALIDO.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 422\", function () { pm.response.to.have.status(422); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Código de erro CUPOM_INVALIDO\", function () { pm.expect(data.erro).to.be.an(\"object\"); pm.expect(data.erro.codigo).to.eql(\"CUPOM_INVALIDO\"); pm.expect(data.erro.mensagem).to.be.a(\"string\").and.not.empty; });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"cliente\":  {\r\n                    \"email\":  \"maria@exemplo.com\",\r\n                    \"cep\":  \"01310-100\",\r\n                    \"nome\":  \"Maria Silva\"\r\n                },\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"P001\",\r\n                      \"quantidade\":  1\r\n                  }\r\n              ],\r\n    \"cupom\":  \"VERAO2026\"\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/pedidos"
+                                                  },
+                                      "name":  "Rejeitar cupom expirado",
+                                      "description":  "Esperado: HTTP 422, erro CUPOM_EXPIRADO.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 422\", function () { pm.response.to.have.status(422); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Código de erro CUPOM_EXPIRADO\", function () { pm.expect(data.erro).to.be.an(\"object\"); pm.expect(data.erro.codigo).to.eql(\"CUPOM_EXPIRADO\"); pm.expect(data.erro.mensagem).to.be.a(\"string\").and.not.empty; });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"cliente\":  {\r\n                    \"email\":  \"maria@exemplo.com\",\r\n                    \"cep\":  \"01310-100\",\r\n                    \"nome\":  \"Maria Silva\"\r\n                }\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/pedidos"
+                                                  },
+                                      "name":  "Rejeitar lista de itens ausente",
+                                      "description":  "Esperado: HTTP 422, erro ITENS_OBRIGATORIOS.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 422\", function () { pm.response.to.have.status(422); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Código de erro ITENS_OBRIGATORIOS\", function () { pm.expect(data.erro).to.be.an(\"object\"); pm.expect(data.erro.codigo).to.eql(\"ITENS_OBRIGATORIOS\"); pm.expect(data.erro.mensagem).to.be.a(\"string\").and.not.empty; });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"itens\":  [\r\n\r\n              ],\r\n    \"cliente\":  {\r\n                    \"email\":  \"maria@exemplo.com\",\r\n                    \"cep\":  \"01310-100\",\r\n                    \"nome\":  \"Maria Silva\"\r\n                }\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/pedidos"
+                                                  },
+                                      "name":  "Rejeitar lista vazia",
+                                      "description":  "Esperado: HTTP 422, erro ITENS_OBRIGATORIOS.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 422\", function () { pm.response.to.have.status(422); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Código de erro ITENS_OBRIGATORIOS\", function () { pm.expect(data.erro).to.be.an(\"object\"); pm.expect(data.erro.codigo).to.eql(\"ITENS_OBRIGATORIOS\"); pm.expect(data.erro.mensagem).to.be.a(\"string\").and.not.empty; });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"itens\":  [\r\n                  {\r\n                      \"quantidade\":  1\r\n                  }\r\n              ],\r\n    \"cliente\":  {\r\n                    \"email\":  \"maria@exemplo.com\",\r\n                    \"cep\":  \"01310-100\",\r\n                    \"nome\":  \"Maria Silva\"\r\n                }\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/pedidos"
+                                                  },
+                                      "name":  "Rejeitar item inválido",
+                                      "description":  "Esperado: HTTP 422, erro ITEM_INVALIDO.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 422\", function () { pm.response.to.have.status(422); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Código de erro ITEM_INVALIDO\", function () { pm.expect(data.erro).to.be.an(\"object\"); pm.expect(data.erro.codigo).to.eql(\"ITEM_INVALIDO\"); pm.expect(data.erro.mensagem).to.be.a(\"string\").and.not.empty; });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"NAO-EXISTE\",\r\n                      \"quantidade\":  1\r\n                  }\r\n              ],\r\n    \"cliente\":  {\r\n                    \"email\":  \"maria@exemplo.com\",\r\n                    \"cep\":  \"01310-100\",\r\n                    \"nome\":  \"Maria Silva\"\r\n                }\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/pedidos"
+                                                  },
+                                      "name":  "Rejeitar produto inexistente",
+                                      "description":  "Esperado: HTTP 422, erro PRODUTO_NAO_ENCONTRADO.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 422\", function () { pm.response.to.have.status(422); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Código de erro PRODUTO_NAO_ENCONTRADO\", function () { pm.expect(data.erro).to.be.an(\"object\"); pm.expect(data.erro.codigo).to.eql(\"PRODUTO_NAO_ENCONTRADO\"); pm.expect(data.erro.mensagem).to.be.a(\"string\").and.not.empty; });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"P001\",\r\n                      \"quantidade\":  1\r\n                  },\r\n                  {\r\n                      \"produtoId\":  \"P001\",\r\n                      \"quantidade\":  2\r\n                  }\r\n              ],\r\n    \"cliente\":  {\r\n                    \"email\":  \"maria@exemplo.com\",\r\n                    \"cep\":  \"01310-100\",\r\n                    \"nome\":  \"Maria Silva\"\r\n                }\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/pedidos"
+                                                  },
+                                      "name":  "Rejeitar produto duplicado",
+                                      "description":  "Esperado: HTTP 422, erro ITEM_DUPLICADO.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 422\", function () { pm.response.to.have.status(422); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Código de erro ITEM_DUPLICADO\", function () { pm.expect(data.erro).to.be.an(\"object\"); pm.expect(data.erro.codigo).to.eql(\"ITEM_DUPLICADO\"); pm.expect(data.erro.mensagem).to.be.a(\"string\").and.not.empty; });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"P001\",\r\n                      \"quantidade\":  0\r\n                  }\r\n              ],\r\n    \"cliente\":  {\r\n                    \"email\":  \"maria@exemplo.com\",\r\n                    \"cep\":  \"01310-100\",\r\n                    \"nome\":  \"Maria Silva\"\r\n                }\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/pedidos"
+                                                  },
+                                      "name":  "Rejeitar quantidade inválida",
+                                      "description":  "Esperado: HTTP 422, erro QUANTIDADE_INVALIDA.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 422\", function () { pm.response.to.have.status(422); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Código de erro QUANTIDADE_INVALIDA\", function () { pm.expect(data.erro).to.be.an(\"object\"); pm.expect(data.erro.codigo).to.eql(\"QUANTIDADE_INVALIDA\"); pm.expect(data.erro.mensagem).to.be.a(\"string\").and.not.empty; });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"P001\",\r\n                      \"quantidade\":  6\r\n                  }\r\n              ],\r\n    \"cliente\":  {\r\n                    \"email\":  \"maria@exemplo.com\",\r\n                    \"cep\":  \"01310-100\",\r\n                    \"nome\":  \"Maria Silva\"\r\n                }\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/pedidos"
+                                                  },
+                                      "name":  "Rejeitar mais de cinco unidades (BUG-002 conhecido)",
+                                      "description":  "Esperado: HTTP 422, erro QUANTIDADE_MAXIMA_EXCEDIDA.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 422\", function () { pm.response.to.have.status(422); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Código de erro QUANTIDADE_MAXIMA_EXCEDIDA\", function () { pm.expect(data.erro).to.be.an(\"object\"); pm.expect(data.erro.codigo).to.eql(\"QUANTIDADE_MAXIMA_EXCEDIDA\"); pm.expect(data.erro.mensagem).to.be.a(\"string\").and.not.empty; });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"P001\",\r\n                      \"quantidade\":  1\r\n                  }\r\n              ],\r\n    \"cliente\":  {\r\n                    \"email\":  \"maria@exemplo.com\",\r\n                    \"cep\":  \"01310-100\",\r\n                    \"nome\":  \"Maria\"\r\n                }\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/pedidos"
+                                                  },
+                                      "name":  "Rejeitar nome sem sobrenome",
+                                      "description":  "Esperado: HTTP 422, erro DADOS_INVALIDOS.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 422\", function () { pm.response.to.have.status(422); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Código de erro DADOS_INVALIDOS\", function () { pm.expect(data.erro).to.be.an(\"object\"); pm.expect(data.erro.codigo).to.eql(\"DADOS_INVALIDOS\"); pm.expect(data.erro.mensagem).to.be.a(\"string\").and.not.empty; });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"P001\",\r\n                      \"quantidade\":  1\r\n                  }\r\n              ],\r\n    \"cliente\":  {\r\n                    \"email\":  \"invalido\",\r\n                    \"cep\":  \"01310-100\",\r\n                    \"nome\":  \"Maria Silva\"\r\n                }\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/pedidos"
+                                                  },
+                                      "name":  "Rejeitar e-mail inválido",
+                                      "description":  "Esperado: HTTP 422, erro DADOS_INVALIDOS.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 422\", function () { pm.response.to.have.status(422); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Código de erro DADOS_INVALIDOS\", function () { pm.expect(data.erro).to.be.an(\"object\"); pm.expect(data.erro.codigo).to.eql(\"DADOS_INVALIDOS\"); pm.expect(data.erro.mensagem).to.be.a(\"string\").and.not.empty; });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"P001\",\r\n                      \"quantidade\":  1\r\n                  }\r\n              ],\r\n    \"cliente\":  {\r\n                    \"email\":  \"maria@exemplo.com\",\r\n                    \"cep\":  \"1234\",\r\n                    \"nome\":  \"Maria Silva\"\r\n                }\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/pedidos"
+                                                  },
+                                      "name":  "Rejeitar CEP incompleto",
+                                      "description":  "Esperado: HTTP 422, erro DADOS_INVALIDOS.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 422\", function () { pm.response.to.have.status(422); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Código de erro DADOS_INVALIDOS\", function () { pm.expect(data.erro).to.be.an(\"object\"); pm.expect(data.erro.codigo).to.eql(\"DADOS_INVALIDOS\"); pm.expect(data.erro.mensagem).to.be.a(\"string\").and.not.empty; });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{\r\n    \"itens\":  [\r\n                  {\r\n                      \"produtoId\":  \"P001\",\r\n                      \"quantidade\":  1\r\n                  }\r\n              ],\r\n    \"cliente\":  {\r\n                    \"email\":  \"maria@exemplo.com\",\r\n                    \"cep\":  \"01310100\",\r\n                    \"nome\":  \"Maria Silva\"\r\n                }\r\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/pedidos"
+                                                  },
+                                      "name":  "Aceitar CEP válido sem hífen",
+                                      "description":  "Esperado: HTTP 201.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Validar campos e cálculos documentados\", function () {",
+                                                                                    "pm.expect(Math.abs(data[\"subtotal\"] - 59.9) \u003c 0.011, \"subtotal\").to.be.true;",
+                                                                                    "});",
+                                                                                    "pm.test(\"Número do pedido no formato documentado\", function () { pm.expect(data.numero).to.match(/^VZ-\\d{6}$/); pm.expect(data.criadoEm).to.be.a(\"string\"); });",
+                                                                                    "pm.test(\"CEP normalizado para oito dígitos\", function () { pm.expect(data.cliente.cep).to.eql(\"01310100\"); });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "raw":  "{ json malformado",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "text"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{baseUrl}}/api/pedidos"
+                                                  },
+                                      "name":  "Rejeitar JSON malformado",
+                                      "description":  "Esperado: HTTP 400, erro JSON_INVALIDO.",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });",
+                                                                                    "let data; pm.test(\"Resposta JSON válida\", function () { data = pm.response.json(); pm.expect(data).to.exist; });",
+                                                                                    "pm.test(\"Código de erro JSON_INVALIDO\", function () { pm.expect(data.erro).to.be.an(\"object\"); pm.expect(data.erro.codigo).to.eql(\"JSON_INVALIDO\"); pm.expect(data.erro.mensagem).to.be.a(\"string\").and.not.empty; });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ]
+                                  }
+                              ]
+                 }
+             ],
+    "variable":  [
+                     {
+                         "key":  "baseUrl",
+                         "type":  "string",
+                         "value":  "https://verzel-store.qa-test-verzel-store.workers.dev"
+                     }
+                 ]
+}
