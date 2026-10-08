@@ -117,10 +117,12 @@ Registra as inconformidades e defeitos identificados durante a fase de testes ma
 
   `POST /api/carrinho/calcular` no Postman: `200 OK`, com `"quantidade": 6` e `"total": 359.4`.
 
- ![alt text](image.png)
+ <img width="771" height="537" alt="image" src="https://github.com/user-attachments/assets/6b9614a7-d935-42d0-bdea-d88d85521ade" />
+
 
   `POST /api/pedidos` no Postman: `201 Created`, com `"quantidade": 6` e `"total": 359.4`.
 
- ![alt text](image-1.png)
+ <img width="777" height="535" alt="image" src="https://github.com/user-attachments/assets/ebd5bb79-9fa5-4b4a-afbd-c3fd03774157" />
+
 
   Cenário BDD em `tests/features/api_carrinho_pedidos.feature` (*"Rejeição de pedido com mais de 5 unidades por produto via API"*), automatizado em `tests/step_defs/test_api_steps.py` e anotado com `@pytest.mark.xfail`.
