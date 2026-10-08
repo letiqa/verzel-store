@@ -107,8 +107,6 @@ A suite contém testes com assertions de status, respostas, cálculos, cupons, f
 
 O workflow em `.github/workflows/ci-cd.yml` instala as dependências e o Chromium e executa toda a suíte em pushes, pull requests, execuções manuais e diariamente às **08:00 (horário de Brasília, UTC−3)**. O GitHub Actions usa UTC, por isso o agendamento está definido para `11:00 UTC`. Os resultados brutos e o relatório HTML do Allure são guardados como artefatos por 14 dias, inclusive quando há falhas nos testes. Após uma execução bem-sucedida na branch padrão, o relatório também é publicado no GitHub Pages.
 
-Para habilitar a publicação, configure **Settings → Pages → Build and deployment → Source → GitHub Actions** no repositório. Se o Pages ainda não estiver habilitado, o workflow não falha: o relatório continua disponível como artefato da execução, e a publicação é ignorada com um aviso. Quando configurado, o relatório publicado fica disponível na URL de Pages exibida pela execução do workflow. A publicação não ocorre em pull requests nem em branches diferentes da padrão. O agendamento roda na branch padrão e pode sofrer pequenos atrasos conforme a fila do GitHub Actions.
-
 ---
 
 ##  Relatórios Allure
