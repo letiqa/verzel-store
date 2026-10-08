@@ -11,6 +11,8 @@ Tomei a iniciativa de utilizar allure para fazer os reports e implementar CI/CD 
 
 O relatório pode ser visualizado aqui:
 https://letiqa.github.io/verzel-store/
+
+
 [Bug Report](https://github.com/letiqa/verzel-store/blob/main/BUG_REPORT.md)
 
 
