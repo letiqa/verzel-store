@@ -4,6 +4,8 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+  schedule:
+    - cron: "0 11 * * *"
 
 permissions:
   contents: read
@@ -33,6 +35,7 @@ jobs:
         run: python -m playwright install --with-deps chromium
 
       - name: Run automated tests
+        id: run-tests
         run: python -m pytest
 
       - name: Upload raw Allure results
@@ -45,32 +48,33 @@ jobs:
           retention-days: 14
 
       - name: Set up Java for Allure
-        if: success()
+        if: always() && steps.run-tests.outcome != 'skipped'
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
 
       - name: Set up Node.js for Allure
-        if: success()
+        if: always() && steps.run-tests.outcome != 'skipped'
         uses: actions/setup-node@v4
         with:
           node-version: "22"
 
       - name: Install Allure Commandline
-        if: success()
+        if: always() && steps.run-tests.outcome != 'skipped'
         run: npm install --global allure-commandline@2.46.1
 
       - name: Generate Allure HTML report
-        if: success()
+        if: always() && steps.run-tests.outcome != 'skipped'
         run: allure generate reports/allure-results --clean --output reports/allure-report
 
       - name: Upload Allure HTML report
-        if: success()
+        if: always() && steps.run-tests.outcome != 'skipped'
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
           path: reports/allure-report/
+          if-no-files-found: ignore
           retention-days: 14
 
   deploy-report:
