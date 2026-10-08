@@ -3,7 +3,7 @@
 
 Foram realizados testes manuais funcionais e exploratórios, cobrindo as duas funcionalidades implementadas: funcionamento do novo cupom e frete grátis a partir de 200,00. Foram feitos testes de API usando postman.
 
- Finalizados os testes manuais, foi feita uma suíte de testes automatizados usando **Playwright (Python) ** e ** BDD + Gherkin (`pytest-bdd`)**, validando o funcionamento. Os testes automatizados cobrindo as situações onde foram encontrados bugs ficam sinalizados usando o marcador xfail (expected failure), e não quebram a suíte de testes. Quando forem corrigidos serão marcados com xpassed. 
+ Finalizados os testes manuais, foi feita uma suíte de testes automatizados usando **Playwright (Python) e BDD + Gherkin (`pytest-bdd`)**, validando o funcionamento. Os testes automatizados cobrindo as situações onde foram encontrados bugs ficam sinalizados usando o marcador xfail (expected failure), e não quebram a suíte de testes. Quando forem corrigidos serão marcados com xpassed. 
 
 A IA foi utilizada para criar a base dos testes automatizados, correção de sintaxe e formatação de arquivos .md, acelerando os processos.
 
