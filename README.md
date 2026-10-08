@@ -95,7 +95,7 @@ verzel-store/
 ├── .gitignore                        # Exclusões de arquivos locais e gerados
 ├── pytest.ini                        # Configuração de coleta, markers e Allure
 ├── requirements.txt                  # Dependências Python
-├── TEST_CASES.md                     # Inventário dos casos automatizados
+├── TEST_CASES_AUTOMACAO.md           # Inventário dos casos automatizados
 ├── Verzel Store API.postman_collection.json
 └── README.md                         # Este documento
 ```
