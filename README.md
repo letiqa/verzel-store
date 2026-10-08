@@ -69,7 +69,7 @@ Casos automatizados com Playwright e pytest-bdd, organizados por título, pré-c
 - **Cliente de API**: `services/api_client.py` centraliza as chamadas HTTP usadas pelos testes de API.
 - **Configuração e fixtures**: `config/settings.py` reúne URL e dados fixos da loja. `tests/conftest.py` configura fixtures de Playwright e API, integra os cenários BDD, marca defeitos conhecidos como `xfail` e anexa screenshots de falhas ao Allure.
 - **Collection Postman**: O arquivo `Verzel Store API.postman_collection.json` contém a suíte importável dos testes de API.
-- **CI/CD**: `.github/workflows/ci-cd.yml` executa os testes automatizados, gera o relatório Allure e o publica no GitHub Pages após sucesso na branch padrão, quando Pages estiver habilitado.
+- **CI/CD**: `.github/workflows/ci-cd.yml` executa os testes automatizados e gera o relatório Allure.
 
 ```text
 verzel-store/
