@@ -62,7 +62,7 @@ verzel-store/
 ├── BUG_REPORT.md                     # Bugs encontrados
 ├── TEST_CASES_AUTOMACAO.md           # Inventário dos casos automatizados
 ├── TEST_CASES_MANUAIS.md             # Inventário dos casos manuais
-├── Verzel Store API.postman_collection.json
+├── Verzel Store API.postman_collection.json  # Arquivo com a collection do Postman
 └── README.md                         # Este documento
 ```
 
