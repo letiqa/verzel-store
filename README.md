@@ -5,7 +5,7 @@ Foram realizados testes manuais funcionais e exploratórios, cobrindo as duas fu
 
  Finalizados os testes manuais, foi feita uma suíte de testes automatizados usando **Playwright (Python) e BDD + Gherkin (`pytest-bdd`)**, validando o funcionamento. Os testes automatizados cobrindo as situações onde foram encontrados bugs ficam sinalizados usando o marcador xfail (expected failure), e não quebram a suíte de testes. Quando forem corrigidos serão marcados com xpassed. 
 
-A IA foi utilizada para criar a base dos testes automatizados, correção de sintaxe e formatação de arquivos .md, acelerando os processos.
+A IA foi utilizada para criar a base dos testes automatizados, correção de sintaxe, formatação de arquivos .md e implementação de CI/CD acelerando os processos.
 
 Tomei a iniciativa de utilizar allure para fazer os reports e implementar CI/CD para deixar a suite de testes mais completa.
 
